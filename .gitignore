@@ -1,0 +1,5 @@
+temp
+.vscode/
+build/
+build-tool/
+obj/
