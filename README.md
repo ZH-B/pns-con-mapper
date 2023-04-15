@@ -54,14 +54,20 @@ fork 子进程 使用 Android原生的 screenrecord 脚本 获取屏幕的rgb24�
 
 执行 ：
 
+将adb连接到模拟器
 adb connect 127.0.0.1:7555
 
+创建temp文件夹
 adb shell "mkdir -p  /data/local/temp"
 
+将执行程序推入设备
 adb push con-mapper  /data/local/temp
 
+为执行程序赋予可执行权限
 adb shell \"chmod a+x /data/local/temp/con-mapper"
 
+运行
+adb shell "/data/local/temp/con-mapper"
 
 
 首次启动时需要标定技能栏位置
