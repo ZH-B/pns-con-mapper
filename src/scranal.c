@@ -374,7 +374,7 @@ void anal_scr_get_skill_slot(int frame_buffer_fd) {
     char skill_slot_res_msg[100] = "skill_slot [";
     for (int i = 0; i < 8; i++) {
         char skill_item[5];
-        sprintf(skill_item, "%d ,", skill_slot[i]);
+        sprintf(skill_item, "%d,", skill_slot[i]);
         strcat(skill_slot_res_msg, skill_item);
     }
     strcat(skill_slot_res_msg, "]");
@@ -445,6 +445,19 @@ void init_sc_anal_params() {
     std_o[0] = ((int)STD_R.r + STD_B.r + STD_Y.r) / 3;
     std_o[1] = ((int)STD_R.g + STD_B.g + STD_Y.g) / 3;
     std_o[2] = ((int)STD_R.b + STD_B.b + STD_Y.b) / 3;
+
+    LOG(
+        "init_sc_anal_params loaded"
+        "sc_w x sc_h: %d x %d\n"
+        "skillslot l, h, r (%d, %d, %d)"
+        "sample info:"
+        "%d x %d"
+        "l, h, r (%d, %d, %d)",
+        origin_sc_w, origin_sc_h,
+        origin_sc_skill_slot_l, origin_sc_skill_slot_h, origin_sc_skill_slot_r,
+        sample_sc_w, sample_sc_h,
+        sample_sc_skill_slot_l, sample_sc_skill_slot_h, sample_sc_skill_slot_r
+    );
 }
 
 int start_scr_anal() {

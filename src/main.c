@@ -187,9 +187,6 @@ int calib_params() {
     parse_screen_resolution(res, &width, &height);
     LOG("获得屏幕分辨率：%d x %d", width, height);
 
-    origin_sc_w = width;
-    origin_sc_h = height;
-
     // 根据接下来两次点击事件, 配置技能槽参数
     int x1 = 0, y1= 0, x2= 0, y2= 0;
     while (1) {
@@ -203,19 +200,12 @@ int calib_params() {
         if(input == 'Y' || input == 'y') {
             break;
         }
-
-        origin_sc_skill_slot_l = x1;
-        origin_sc_skill_slot_r = x2;
-        origin_sc_skill_slot_h = y1;
     }
 
     InitParams params = {
-        origin_sc_w,
-        origin_sc_h,
+        width,height,
 
-        origin_sc_skill_slot_l,
-        origin_sc_skill_slot_h,
-        origin_sc_skill_slot_r
+        x1,y1,x2
     };
 
     save_params(&params);
@@ -234,6 +224,8 @@ int init_params() {
     origin_sc_skill_slot_l = params.sc_skill_slot_l;
     origin_sc_skill_slot_h = params.sc_skill_slot_h;
     origin_sc_skill_slot_r = params.sc_skill_slot_r;
+
+    origin_sc_item_spac = (origin_sc_skill_slot_r - origin_sc_skill_slot_l) / 7;
 
     return err;
 }
