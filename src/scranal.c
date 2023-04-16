@@ -234,7 +234,7 @@ enum skill_t stat_item_pix(uint8_t *input, int buffer_stride,
         num_w);
 
     // 具有一定数量的纯白色像素 判定成技能图标
-    if (1.0 * num_w / pix_num > 0.05) {
+    if (1.0 * num_w / pix_num > 0.02) {
         enum skill_t res = SKILL_T_INVALID;
 
         float satura = saturation(edge_avg_color);
@@ -254,6 +254,7 @@ enum skill_t stat_item_pix(uint8_t *input, int buffer_stride,
                 res = SKILL_T_Y;
             } else {
                 LOG("======  Incorrectly recognizable !!!!!!!");
+                res = SKILL_T_W;
             }
         }
         LOG("res : %d, satura:%f conf: r: %f \tb: %f\t y:%f", res, satura,conf_r, conf_b,
