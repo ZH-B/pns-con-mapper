@@ -20,44 +20,6 @@ uint64_t util_get_timestamp() {
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
-static void wait_until_end(int pid) {
-    while (waitpid(pid, NULL, WNOHANG) == 0) {
-        usleep(50 * 1000);
-    }
-}
-
-int sh(char *cmdstr) {
-    int pid = fork();
-
-    if (pid < 0) {
-        LOG("fork failed");
-        return 1;
-    }
-
-    if (pid == 0) {
-        execl(SHELL, "sh", "-c", cmdstr, NULL);
-        exit(0);
-    } else {
-        wait_until_end(pid);
-        return 0;
-    }
-}
-
-int sh_aync(char *cmdstr) {
-    int pid = fork();
-
-    if (pid < 0) {
-        LOG("fork failed");
-        return 1;
-    }
-
-    if (pid == 0) {
-        execl(SHELL, "sh", "-c", cmdstr, NULL);
-        exit(0);
-    }
-    return pid;
-}
-
 char* sh_res(const char* command) {
     char* result = (char*) malloc(MAX_OUTPUT_LENGTH);
     if (!result) {

@@ -1,5 +1,5 @@
 CC = ./build-tool/bin/arm-none-linux-gnueabihf-g++
-CFLAGS = -Wall -Werror -fPIE -fpermissive -pthread -static 
+CFLAGS = -Wall -Werror -fPIE -fpermissive -pthread -static
 LDFLAGS = \
 		-static \
 		-L./build-tool/arm-none-linux-gnueabihf/libc/usr/lib/ \

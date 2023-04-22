@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "keymonitor.h"
 #include "scranal.h"
+#include "assit_ui.h"
 
 int origin_sc_w = DEFAULT_ORIGIN_SC_W;
 int origin_sc_h = DEFAULT_ORIGIN_SC_H;
@@ -25,17 +26,9 @@ void key_event_process(struct input_event event) {
     LOG("key_event_process key: 0x%x, type: %d, value: %d ts: %lu",
            event.code, event.type, event.value,
            (event.time.tv_sec * 1000 + event.time.tv_usec / 1000));
-    static int sig_LT = 0;
-    static int sig_LS = 0;
     enum skill_t target = SKILL_T_INVALID;
 
     switch (event.code) {
-    case BTN_TL2:
-        sig_LT = event.value;
-        break;
-    case BTN_THUMBL:
-        sig_LS = event.value;
-        break;
     case BTN_A: // SKILL B
         target = SKILL_T_B;
         break;
@@ -54,21 +47,21 @@ void key_event_process(struct input_event event) {
 
     if (target != SKILL_T_INVALID) {
         LOG("key_event_process target %d", target);
-        int s_group[3] = {-1, -1, -1};
+        int s_group[SKILL_GROUP_SIZE_MAX] = {-1, -1, -1};
         int s_group_index = 0;
         int target_count = 0;
         enum skill_t *skill_slot = get_skill_slot();
-        for (int i = 7; i >= 0; i--) {
+        for (int i = SKILL_SLOT_SIZE - 1; i >= 0; i--) {
             if (skill_slot[i] != target) {
                 target_count = 0;
             }
             if (skill_slot[i] == target) {
                 target_count++;
-                if (target_count > 3 || target == SKILL_T_W) {
+                if (target_count > SKILL_GROUP_SIZE_MAX || target == SKILL_T_W) {
                     target_count = 1;
                 }
                 if (target_count == 1) {
-                    for (int j = s_group_index; j < 3; j++) {
+                    for (int j = s_group_index; j < SKILL_GROUP_SIZE_MAX; j++) {
                         s_group[j] = i;
                     }
                     s_group_index++;
@@ -76,11 +69,18 @@ void key_event_process(struct input_event event) {
             }
         }
 
+        struct group_key_stats_t* p_group_key_stats = NULL;
+
+        p_group_key_stats = get_group_key_stats();
+
         int g_index = 0;
-        if (sig_LT)
+        if (p_group_key_stats->LT_hold) {
             g_index = 1;
-        if (sig_LS)
+        }
+
+        if (p_group_key_stats->LS_hold) {
             g_index = 2;
+        }
 
         int tap_skill_index = s_group[g_index];
 
@@ -225,7 +225,7 @@ int init_params() {
     origin_sc_skill_slot_h = params.sc_skill_slot_h;
     origin_sc_skill_slot_r = params.sc_skill_slot_r;
 
-    origin_sc_item_spac = (origin_sc_skill_slot_r - origin_sc_skill_slot_l) / 7;
+    origin_sc_item_spac = (origin_sc_skill_slot_r - origin_sc_skill_slot_l) / (SKILL_SLOT_SIZE - 1);
 
     return err;
 }
@@ -255,16 +255,15 @@ int main(int argc, char **argv) {
     }
 
     start_key_monitor();
-
     start_scr_anal();
-
     set_key_listener(key_event_process);
-
     signal(SIGINT, handle_stop);
 
+    start_ui_assit();
     while (!flag_stop_sig) {
         usleep(33 * 1000);
     }
+    stop_ui_assit();
     stop_scr_anal();
     stop_key_monitor();
     

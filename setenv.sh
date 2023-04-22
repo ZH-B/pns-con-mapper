@@ -22,6 +22,15 @@ adb push build/$PROJECT /data/local/temp
 adb shell \"chmod a+x /data/local/temp/$PROJECT\"
 "
 
+PKG_NAME='com.example.pnsconmapperassist'
+PIP_NAME="/data/local/temp/con_mapper_ui.fifo"
+
 alias run="
     adb shell \"/data/local/temp/$PROJECT\"
+"
+
+alias stop="
+    adb shell killall com.example.pnsconmapperassist
+    adb shell killall screenrecord
+    adb shell killall con-mapper
 "

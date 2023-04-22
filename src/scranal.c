@@ -12,6 +12,7 @@
 #include "utils.h"
 #include "config.h"
 #include "scranal.h"
+#include "assit_ui.h"
 
 #define DUMP_FRAME_TOTAL 30
 static int dump_frame_count = 0;
@@ -271,7 +272,7 @@ int fill_input_buffer(void *input_buffer, int input_buffer_w,
 
     if (sc_buffer == NULL) {
         LOG("sc_buffer is NULL");
-        return 1;
+        return -1;
     }
 
     uint32_t f_stride = PIX_FMT_SIZ * sample_sc_w;
@@ -294,7 +295,7 @@ void dump_buffer(char *filename, void *buffer, int buffer_size) {
 
 static void *input_buffer;
 static void *stat_buffer; // check stat result
-static enum skill_t skill_slot[8] = {SKILL_T_INVALID};
+static enum skill_t skill_slot[SKILL_SLOT_SIZE] = {SKILL_T_INVALID};
 
 enum skill_t *get_skill_slot() { return skill_slot; }
 
@@ -387,8 +388,8 @@ void *screencapfunction(void *args) {
     LOG("start screencapfunction");
     while (!stop_anal_flag) {
         static uint32_t sc_frame_count = 0;
-        long ts_last = 0;
-        long ts_new = 0;
+        static long ts_last = 0;
+        static long ts_new = 0;
         float fps = 0;
         int reded_size = 0;
         int tmp_sz = 0;
@@ -421,6 +422,7 @@ void *scranalfunction(void *args) {
     LOG("start scranalfunction");
     while (!stop_anal_flag) {
         anal_scr_get_skill_slot(fd_pipe_fifo);
+        update_assit_ui(skill_slot);
         usleep(100 * 1000);
     }
 
@@ -471,7 +473,7 @@ int start_scr_anal() {
     fd_pipe_fifo = open(FIFO_FN, O_RDONLY | O_NONBLOCK);
     if (fd_pipe_fifo < 0) {
         LOG("pipe create failed");
-        return 1;
+        return -1;
     }
 
     sc_buffer = malloc(sample_buffer_size);

@@ -40,6 +40,7 @@ static int fd_event_source = 0;
 
 static int flag_sig_keymonitor_stop = 0;
 
+static struct group_key_stats_t group_key_stats;
 
 void input_tap_event(int x, int y) {
     struct input_event e;
@@ -100,6 +101,15 @@ void *key_monitor_funtion(void *args) {
             if (key_listener != NULL) {
                 key_listener(event);
             }
+
+            switch (event.code) {
+                case BTN_TL2:
+                    group_key_stats.LT_hold = event.value;
+                    break;
+                case BTN_THUMBL:
+                    group_key_stats.LS_hold = event.value;
+                    break;
+            }
         }
     }
     close(fd_event_source);
@@ -124,4 +134,8 @@ int start_key_monitor() {
 
 void stop_key_monitor() {
     flag_sig_keymonitor_stop = 1;
+}
+
+struct group_key_stats_t *get_group_key_stats() {
+    return &group_key_stats;
 }

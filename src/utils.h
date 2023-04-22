@@ -20,8 +20,4 @@
 
 uint64_t util_get_timestamp();
 
-int sh(char *cmdstr);
-
-int sh_aync(char *cmdstr);
-
 char* sh_res(const char* command);
