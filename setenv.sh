@@ -22,6 +22,10 @@ adb push build/$PROJECT /data/local/temp
 adb shell \"chmod a+x /data/local/temp/$PROJECT\"
 "
 
+alias install="
+adb install assister/pns-conmapper-assister.apk
+"
+
 PKG_NAME='com.example.pnsconmapperassist'
 PIP_NAME="/data/local/temp/con_mapper_ui.fifo"
 
