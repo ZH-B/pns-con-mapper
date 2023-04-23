@@ -15,6 +15,11 @@
 #define PIPE_FN PATH_ROOT "con_mapper_ui.fifo"
 #define UI_MERGIN 5
 
+const static struct pix_color_t UI_HINT_R = {245, 85, 130};
+const static struct pix_color_t UI_HINT_Y = {198, 146, 77};
+const static struct pix_color_t UI_HINT_B = {81, 139, 225};
+const static struct pix_color_t UI_HINT_W = {255, 255, 255};
+
 static int ui_assit_running = 0;
 static int fd_pipe = -1;
 
@@ -25,7 +30,7 @@ int start_ui_assit(){
         LOG("can not found :" PKG_NAME " no ui assiter");
         return -1;
     }
-
+    // am start-foreground-service -n com.example.pnsconmapperassist/.PNSUIService -e pip_name /data/local/temp/con_mapper_ui.fifo
     sh_res("am start-foreground-service -n " PKG_NAME "/" SERVECE_NAME " -e pip_name " PIPE_FN);
 
     ui_assit_running = 1;
@@ -135,16 +140,16 @@ int update_assit_ui(enum skill_t* skill_slot) {
             struct pix_color_t color;
             switch (skill_slot[i]) {
                 case SKILL_T_R:
-                    color = STD_R;
+                    color = UI_HINT_R;
                     break;
                 case SKILL_T_Y:
-                    color = STD_Y;
+                    color = UI_HINT_Y;
                     break;
                 case SKILL_T_B:
-                    color = STD_B;
+                    color = UI_HINT_B;
                     break;
                 case SKILL_T_W:
-                    color = STD_W;
+                    color = UI_HINT_W;
                     break;
                 default:
                     break;
@@ -169,9 +174,11 @@ int update_assit_ui(enum skill_t* skill_slot) {
 }
 
 int stop_ui_assit(){
-    sh_res("am stopservice " PKG_NAME "/" SERVECE_NAME);
-    fd_pipe = -1;
-    ui_assit_running = 0;
-    
+    if (ui_assit_running) {
+        sh_res("am stopservice " PKG_NAME "/" SERVECE_NAME);
+        fd_pipe = -1;
+        ui_assit_running = 0;
+    }
+
     return 0;
 }
