@@ -40,8 +40,10 @@ fork 子进程 使用 Android原生的 screenrecord 脚本 获取屏幕的rgb24�
 统计图标区域中的像素， 寻找纯[白色]边缘的像素，并计算它们与设定的 红 蓝 黄 标准色的余弦相似度并打分
 最终判断每个技能球的具体结果
 
-最后通过读写 /dev/input/event 的方式， 读取手柄的输入，并且映射到屏幕指定区域发送触摸事件
+将判断结果组成规定的字符串， 通过管道发送给用于可视化的Service, Service 生成一个覆盖全屏幕的悬浮窗
+根据识别结果与按键状态绘制可视化辅助
 
+最后通过读写 /dev/input/event 的方式， 读取手柄的输入，并且映射到屏幕指定区域发送触摸事件
 
 
 ## 使用说明
@@ -65,6 +67,11 @@ adb push con-mapper  /data/local/temp
 
 为执行程序赋予可执行权限
 adb shell \"chmod a+x /data/local/temp/con-mapper"
+
+可选：
+安装可视化Service 提供视觉支持
+adb install assister/pns-conmapper-assister.apk
+
 
 运行
 adb shell "/data/local/temp/con-mapper"
